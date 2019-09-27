@@ -1,10 +1,11 @@
+require('dotenv').config()
 module.exports = {
   database: {
     mysql: {
-      host: 'localhost',
-      user: 'root',
-      password: '',
-      database: 'db_restful'
+      host: process.env.DB_HOSTNAME,
+      user: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME
     }
   }
 }
