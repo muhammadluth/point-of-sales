@@ -7,7 +7,7 @@
 
 ## Setup
 1. Clone repository
-`$ https://github.com/muhammadluth/point-of-sales.git`
+`$ https://github.com/muhammadluth/point-of-sales.git`\n
 `$ cd point-of-sales`
 
 2. Install depedencies
