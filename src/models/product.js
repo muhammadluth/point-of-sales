@@ -4,7 +4,7 @@ module.exports = {
     getProduct: (search, limit, page = 1, data) => {
         console.log(limit, page)
         return new Promise ((resolve, reject) => {
-            conn.query(`SELECT product.name, product.description, product.image, category.name as category, product.price, product.qty from product product JOIN category ON product.category_id = category.id 
+            conn.query(`SELECT product.id, product.name, product.description, product.image, category.name as category, product.price, product.qty FROM product JOIN category ON product.category_id = category.id 
             ${search ? `WHERE product.name LIKE '%${search}%'` : ''} ${limit ? `LIMIT ${limit} OFFSET ${(page - 1) * limit}` : ''} ${data ? `ORDER BY ${data}` : ''}`,
             (err, result) => {
                 if(!err) {
@@ -18,6 +18,19 @@ module.exports = {
     getByName: (name) =>{
         return new Promise((resolve, reject) =>{
             conn.query('SELECT COUNT(id) AS product FROM product WHERE name = ?', [name],
+            (err, result) => {
+                if (!err) {
+                    resolve(result)
+                }else{
+                    reject(new Error(err))
+                }
+            })
+        })
+
+    },
+    getById: (id) =>{
+        return new Promise((resolve, reject) =>{
+            conn.query('SELECT * FROM product WHERE id = ?', [id],
             (err, result) => {
                 if (!err) {
                     resolve(result)
@@ -50,6 +63,9 @@ module.exports = {
                     })
             })
     },
+    // updateImage: (image) =>{
+
+    // },
     deleteProduct: (data) => {
         return new Promise ((resolve, reject) => {
             conn.query('DELETE from product where id=?', [data], (err, result) => {

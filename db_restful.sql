@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 26 Sep 2019 pada 18.45
+-- Waktu pembuatan: 27 Sep 2019 pada 13.32
 -- Versi server: 10.3.16-MariaDB
 -- Versi PHP: 7.3.7
 
@@ -35,6 +35,13 @@ CREATE TABLE `category` (
   `update_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data untuk tabel `category`
+--
+
+INSERT INTO `category` (`id`, `name`, `created_at`, `update_at`) VALUES
+(6, 'Makanan', '2019-09-27 07:18:34', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -52,6 +59,15 @@ CREATE TABLE `product` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `update_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `product`
+--
+
+INSERT INTO `product` (`id`, `name`, `description`, `image`, `category_id`, `price`, `qty`, `created_at`, `update_at`) VALUES
+(16, 'Sate Ayam', 'Sate Ayam adalah makanan kuntilanak', 'e4a50a09-816d-4368-a209-0bba657bad1e.png', 6, 15000, 100, '2019-09-27 07:19:23', NULL),
+(17, 'Sate Kambing adalah', 'Sate Kambing adalah makanan kuntilanak', '360c9d34-29e5-402e-9316-b8f8a02fc067.png', 6, 40000, 100, '2019-09-27 07:21:03', '2019-09-27 07:40:30'),
+(18, 'Sate Kambing adalah Sapi ayam', 'Sate Kambing adalah makanan kuntilanak', '89ed12d8-8bd8-40bf-94dd-e9d156d010b9.jpeg', 6, 40000, 100, '2019-09-27 07:53:03', '2019-09-27 07:58:53');
 
 -- --------------------------------------------------------
 
@@ -84,6 +100,7 @@ ALTER TABLE `category`
 --
 ALTER TABLE `product`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name_2` (`name`),
   ADD UNIQUE KEY `name` (`name`);
 
 --
@@ -101,13 +118,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT untuk tabel `category`
 --
 ALTER TABLE `category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT untuk tabel `product`
 --
 ALTER TABLE `product`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT untuk tabel `users`

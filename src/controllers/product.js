@@ -1,5 +1,6 @@
 const productModel = require('../models/product')
 const uuid = require('uuid/v4')
+const fs = require('fs').promises
 
 module.exports = {
     getProduct: (req, res) => {
@@ -20,6 +21,26 @@ module.exports = {
                 message: 'Error View a Data!'
             })
         })
+    },
+    getById: (req,res) =>{
+        const { id } = req.params
+
+        productModel.getById(id)
+        .then(result => {
+            res.json({
+                status: 200,
+                message: 'SUKSES!!!',
+                data: result
+            })
+        })
+        .catch(err => {
+            console.log(err)
+            res.json({
+                status: 500,
+                message: 'ERROR!!!'
+            })
+        })
+
     },
     addProduct: async (req, res) => {
         const { name, description, category_id, price, qty } = req.body
@@ -108,10 +129,17 @@ module.exports = {
             if(err)
             return res.status(500).send(err);
         });
-
-        const data = { name, description, image, category_id, price, qty }
-
-        productModel.updateProduct([data, { id: req.params.id }])
+        
+        productModel.getById(req.params.id)
+        .then(([result]) => {
+            console.log(result)
+            fs.unlink(`uploads/images/${result.image}`)
+            .catch(err => {})
+        })
+        .then(() => {
+            const data = { name, description, image, category_id, price, qty }
+            return productModel.updateProduct([data, { id: req.params.id }])
+        })
         .then(result => {
             res.json({
                 status: 200,
