@@ -3,194 +3,187 @@ const uuid = require('uuid/v4')
 const fs = require('fs').promises
 
 module.exports = {
-    getProduct: (req, res) => {
-        let { search, limit, page, sort } = req.query
+  getProduct: (req, res) => {
+    const { search, limit, page, sort } = req.query
 
-        productModel.getProduct(search, limit, page, sort)
-        .then(result => {
-            res.json({
-                status: 200,
-                message: 'Success View a Data!',
-                data: (result)
-            })
+    productModel.getProduct(search, limit, page, sort)
+      .then(result => {
+        res.json({
+          status: 200,
+          message: 'Success View a Data!',
+          data: (result)
         })
-        .catch(err => {
-            console.log(err)
-            res.json({
-                status: 500,
-                message: 'Error View a Data!'
-            })
+      })
+      .catch(err => {
+        console.log(err)
+        res.json({
+          status: 500,
+          message: 'Error View a Data!'
         })
-    },
-    getById: (req,res) =>{
-        const { id } = req.params
+      })
+  },
+  getById: (req, res) => {
+    const { id } = req.params
 
-        productModel.getById(id)
-        .then(result => {
-            res.json({
+    productModel.getById(id)
+      .then(result => {
+        res.json({
+          status: 200,
+          message: 'SUKSES!!!',
+          data: result
+        })
+      })
+      .catch(err => {
+        console.log(err)
+        res.json({
+          status: 500,
+          message: 'ERROR!!!'
+        })
+      })
+  },
+  addProduct: async (req, res) => {
+    const { name, description, category_id, price, qty } = req.body
+
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).send('No files were uploaded!')
+    }
+
+    const images = req.files.image
+
+    const image = uuid() + `.${req.files.image.mimetype.split('/')[1]}`
+
+    const img = ['png', 'jpg', 'jpeg', 'svg', 'gif'].includes(req.files.image.mimetype.split('/')[1])
+    if (!img) {
+      return res.json({
+        status: 400,
+        message: 'File must be an image ("png","jpg","jpeg","svg","gif")!'
+      })
+    }
+
+    images.mv('uploads/images/' + image, function (err) {
+      if (err) { return res.status(500).send(err) }
+    })
+
+    const data = { name, description, image, category_id, price, qty }
+    // return res.json(data)
+    if (req.files.image) {
+      if (req.body.qty >= 0) {
+        const isProductAvailable = await productModel.getByName(name)
+        console.log(isProductAvailable[0].product)
+        if (isProductAvailable[0].product == 0) {
+          productModel.addProduct(data)
+            .then(result => {
+              res.json({
                 status: 200,
-                message: 'SUKSES!!!',
+                message: 'Success Adding Data!',
                 data: result
+              })
             })
-        })
-        .catch(err => {
-            console.log(err)
-            res.json({
+            .catch(err => {
+              console.log(err)
+              res.json({
                 status: 500,
-                message: 'ERROR!!!'
+                message: 'Error Adding New Data!'
+              })
             })
+        } else {
+          res.json({
+            status: 400,
+            message: 'Error, Product already in database!',
+            name
+          })
+        }
+      } else {
+        res.status(400).json({
+          status: 400,
+          message: 'Quantity cannot below 0'
         })
+      }
+    }
+  },
+  updateProduct: (req, res) => {
+    const { name, description, category_id, price, qty } = req.body
 
-    },
-    addProduct: async (req, res) => {
-        const { name, description, category_id, price, qty } = req.body
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).send('No files were uploaded!')
+    }
 
-        if (!req.files || Object.keys(req.files).length === 0) {
-            return res.status(400).send('No files were uploaded!')
-        }
+    const images = req.files.image
 
-        let images = req.files.image
+    const image = uuid() + `.${req.files.image.mimetype.split('/')[1]}`
 
-        let image = uuid() + `.${req.files.image.mimetype.split("/")[1]}`
+    const img = ['png', 'jpg', 'jpeg', 'svg', 'gif'].includes(req.files.image.mimetype.split('/')[1])
+    if (!img) {
+      return res.json({
+        status: 400,
+        message: 'File must be an image ("png","jpg","jpeg","svg","gif")!'
+      })
+    }
 
-        let img = ["png","jpg","jpeg","svg","gif"].includes(req.files.image.mimetype.split("/")[1])
-        if (!img){
-            return res.json({
-                status: 400,
-                message: 'File must be an image ("png","jpg","jpeg","svg","gif")!'
-            })
+    images.mv('uploads/images/' + image, function (err) {
+      if (err) { return res.status(500).send(err) }
+    })
 
-        }
-        
-        images.mv('uploads/images/' + image, function(err){
-            if(err)
-            return res.status(500).send(err);
-        });
-
+    productModel.getById(req.params.id)
+      .then(([result]) => {
+        console.log(result)
+        fs.unlink(`uploads/images/${result.image}`)
+          .catch(err => {})
+      })
+      .then(() => {
         const data = { name, description, image, category_id, price, qty }
-        //return res.json(data)
-        if(req.files.image)
-        if(req.body.qty >= 0) {
-            let isProductAvailable = await productModel.getByName(name)
-            console.log(isProductAvailable[0].product)
-            if (isProductAvailable[0].product == 0){
-                productModel.addProduct(data)
-                .then(result => {
-                    res.json({
-                        status: 200,
-                        message: 'Success Adding Data!',
-                        data: result
-                    })
-                })
-                .catch(err => {
-                    console.log(err)
-                    res.json({
-                        status: 500,
-                        message: 'Error Adding New Data!'
-                    })
-                })
-            }else{
-                res.json({
-                    status: 400,
-                    message: 'Error, Product already in database!',
-                    name
-                })
-            }
-
-        }else{
-            res.status(400).json({
-                status: 400,
-                message: 'Quantity cannot below 0'
-            })
-
-        }
-    },
-    updateProduct: (req, res) => {
-        const { name, description, category_id, price, qty } = req.body
-
-        if (!req.files || Object.keys(req.files).length === 0) {
-            return res.status(400).send('No files were uploaded!')
-        }
-
-        let images = req.files.image
-
-        let image = uuid() + `.${req.files.image.mimetype.split("/")[1]}`
-
-        let img = ["png","jpg","jpeg","svg","gif"].includes(req.files.image.mimetype.split("/")[1])
-        if (!img){
-            return res.json({
-                status: 400,
-                message: 'File must be an image ("png","jpg","jpeg","svg","gif")!'
-            })
-
-        }
-        
-        images.mv('uploads/images/' + image, function(err){
-            if(err)
-            return res.status(500).send(err);
-        });
-        
-        productModel.getById(req.params.id)
-        .then(([result]) => {
-            console.log(result)
-            fs.unlink(`uploads/images/${result.image}`)
-            .catch(err => {})
+        return productModel.updateProduct([data, { id: req.params.id }])
+      })
+      .then(result => {
+        res.json({
+          status: 200,
+          message: 'Success Updating Data!',
+          data: result
         })
-        .then(() => {
-            const data = { name, description, image, category_id, price, qty }
-            return productModel.updateProduct([data, { id: req.params.id }])
+      })
+      .catch(err => {
+        console.log(err)
+        res.json({
+          status: 500,
+          message: 'Name is Already Exist!'
         })
-        .then(result => {
-            res.json({
-                status: 200,
-                message: 'Success Updating Data!',
-                data: result
-            })
+      })
+  },
+  deleteProduct: (req, res) => {
+    productModel.deleteProduct(req.params.id)
+      .then(result => {
+        res.json({
+          status: 200,
+          message: 'Success Remove Data!',
+          data: result
         })
-        .catch(err => {
-            console.log(err)
-            res.json({
-                status: 500,
-                message: 'Name is Already Exist!'
-            })
+      })
+      .catch(err => {
+        console.log(err)
+        res.json({
+          status: 500,
+          message: 'Error Remove a Data!'
         })
-    },
-    deleteProduct: (req, res) => {
-        
-        productModel.deleteProduct(req.params.id)
-        .then(result => {
-            res.json({
-                status: 200,
-                message: 'Success Remove Data!',
-                data: result
-            })
-        })
-        .catch(err => {
-            console.log(err)
-            res.json({
-                status: 500,
-                message: 'Error Remove a Data!'
-            })
-        })
-    },
-    reduceProduct: (req, res) => {
-        const id = req.params.id
-        const { qty } = req.body
+      })
+  },
+  reduceProduct: (req, res) => {
+    const id = req.params.id
+    const { qty } = req.body
 
-        productModel.reduceProduct(id, qty)
-        .then(result => {
-            res.json({
-                status: 200,
-                message: 'Success Reduce Data!',
-                data: result
-            })
+    productModel.reduceProduct(id, qty)
+      .then(result => {
+        res.json({
+          status: 200,
+          message: 'Success Reduce Data!',
+          data: result
         })
-        .catch(err => {
-            console.log(err)
-            res.json({
-                status: 500,
-                message: 'Error Count a Data!'
-            })
+      })
+      .catch(err => {
+        console.log(err)
+        res.json({
+          status: 500,
+          message: 'Error Count a Data!'
         })
-    },
+      })
+  }
 }

@@ -5,81 +5,81 @@ const jwt = require('jsonwebtoken')
 const config = require('../../auth/config')
 
 module.exports = {
-    login: (req, res) => {
-        var { email, password } = req.body
+  login: (req, res) => {
+    var { email, password } = req.body
 
-        if (email && password){
-            conn.query(`SELECT * FROM users WHERE email = ? && password = ?`, [email, password], (err,result) =>{
-                if (result.length < 1){
-                    return res.json({
-                        success: 400,
-                        message: 'Account not Found!'
-                    })
-                }
-                let token = jwt.sign({email: email}, config.secret,{ expiresIn: '24h'})
-                res.json({
-                    success: 200,
-                    message: 'Authentication Success!',
-                    token: token
-                })
-            })
-        }else{
-            res.json({
-                success: 400,
-                message: 'Please insret user and paswword'
-            })
+    if (email && password) {
+      conn.query('SELECT * FROM users WHERE email = ? && password = ?', [email, password], (err, result) => {
+        if (result.length < 1) {
+          return res.json({
+            success: 400,
+            message: 'Account not Found!'
+          })
         }
-    },
-    getAllUsers: (req, res) => {
-        usersModel.getAllUsers()
-        .then(result => {
-            res.json({
-                status: 200,
-                message: 'Success Viewing Users!',
-                data: (result)
-            })
+        const token = jwt.sign({ email: email }, config.secret, { expiresIn: '24h' })
+        res.json({
+          success: 200,
+          message: 'Authentication Success!',
+          token: token
         })
-        .catch(err => {
-            console.log(err)
-            res.json({
-                status: 500,
-                message: 'Error Viewing Users!'
-            })
+      })
+    } else {
+      res.json({
+        success: 400,
+        message: 'Please insret user and paswword'
+      })
+    }
+  },
+  getAllUsers: (req, res) => {
+    usersModel.getAllUsers()
+      .then(result => {
+        res.json({
+          status: 200,
+          message: 'Success Viewing Users!',
+          data: (result)
         })
-    },
-    register: (req,res ) => {
-        var { username, email, password } = req.body
-        var data = { username, email, password }
+      })
+      .catch(err => {
+        console.log(err)
+        res.json({
+          status: 500,
+          message: 'Error Viewing Users!'
+        })
+      })
+  },
+  register: (req, res) => {
+    var { username, email, password } = req.body
+    var data = { username, email, password }
 
-        usersModel.register(data).then( result => {
-            console.log(data)
-            res.json({
-                status: 200,
-                message: 'Registration Success'
-            })
-        }).catch(err => {
-            console.log(err)
-            res.status(500).json({
-                status: 500,
-                message: 'Registration Failed'
-            })
-        })
-    },
-    updateUsers: (req,res ) => {
-        var {password} = req.body
-        var data = {password}
-        var id = req.params.id
+    usersModel.register(data).then(result => {
+      console.log(data)
+      res.json({
+        status: 200,
+        message: 'Registration Success'
+      })
+    }).catch(err => {
+      console.log(err)
+      res.status(500).json({
+        status: 500,
+        message: 'Registration Failed'
+      })
+    })
+  },
+  updateUsers: (req, res) => {
+    var { password } = req.body
+    var data = { password }
+    var id = req.params.id
 
-        usersModel.updateUsers(data, id).then( result => {
-            res.json({
-                status: 200,
-                message: 'Update Success'
-            })
-        }).catch(err => {
-            res.status(500).json({
-                status: 500,
-                message: 'Update Failed'
-            })
-        })
-    },
+    usersModel.updateUsers(data, id).then(result => {
+      res.json({
+        status: 200,
+        message: 'Update Success'
+      })
+    }).catch(err => {
+      res.status(500).json({
+        status: 500,
+        message: 'Update Failed'
+      })
+    })
+  }
 }
