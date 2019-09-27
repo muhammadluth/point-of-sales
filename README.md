@@ -6,7 +6,7 @@
 - ExpressJS
 
 ## Setup
-1. Clone repository
+1. Clone repository<br>
 `$ https://github.com/muhammadluth/point-of-sales.git`<br>
 `$ cd point-of-sales`
 
