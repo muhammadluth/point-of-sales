@@ -5,7 +5,7 @@ module.exports = {
     console.log(limit, page)
     return new Promise((resolve, reject) => {
       conn.query(`SELECT product.id, product.name, product.description, product.image, category.name as category, product.price, product.qty, product.created_at, product.update_at FROM product JOIN category ON product.category_id = category.id 
-            ${search ? `WHERE product.name LIKE '%${search}%'` : ''} ${limit ? `LIMIT ${limit} OFFSET ${(page - 1) * limit}` : ''} ${name ? `ORDER BY ${name}` : ''}`,
+            ${search ? `WHERE product.name LIKE '%${search}%'` : ''} ${name ? `ORDER BY ${name}` : ''} ${limit ? `LIMIT ${limit} OFFSET ${(page - 1) * limit}` : ''}`,
       (err, result) => {
         if (!err) {
           resolve(result)
