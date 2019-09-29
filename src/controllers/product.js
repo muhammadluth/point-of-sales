@@ -45,7 +45,7 @@ module.exports = {
     const { name, description, category_id, price, qty } = req.body
 
     if (!req.files || Object.keys(req.files).length === 0) {
-      return res.status(400).send('No files were uploaded!')
+      return res.status(400).send('No files were Add!')
     }
 
     const images = req.files.image

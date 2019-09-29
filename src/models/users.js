@@ -1,4 +1,5 @@
 const conn = require('../configs/db')
+const bcrypt = require('bcrypt')
 
 module.exports = {
   getAllUsers: () => {
@@ -12,21 +13,19 @@ module.exports = {
       })
     })
   },
-  register: (data) => {
+  register: (username, email, passwordNotHash) => {
     return new Promise((resolve, reject) => {
-      conn.query('SELECT * FROM users WHERE email = ?', data.email, (err, result) => {
-        if (result.length < 1) {
-          conn.query('INSERT INTO users SET ?', data, (err, res) => {
-            if (!err) {
-              resolve(res)
-            } else {
-              reject(err)
-            }
+          bcrypt.hash(passwordNotHash, 10, (err, password) => {
+            if (err) return reject(err)
+            const data = { username, email, password }
+            conn.query(`INSERT INTO users SET ?`, data, (err, res) => {
+              if (!err) {
+                resolve(res)
+              } else {
+                reject(err)
+              }
+            })
           })
-        } else {
-          reject('The email is already')
-        }
-      })
     })
   }
 }

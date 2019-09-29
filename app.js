@@ -6,6 +6,7 @@ const logger = require('morgan')
 const fileUpload = require('express-fileupload')
 const cors = require('cors')
 const passport = require('passport')
+require('dotenv').config()
 // import es6
 // import express from 'express'
 
@@ -29,7 +30,3 @@ app.use('/api', routerNav)
 app.get('*'), (req, res) => {
   res.send('Sorry, 404 Page not Found')
 }
-
-// app.get('*', (req,res) => {
-//     res.send('Sorry, You Human Errors!!!')
-// })

@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const config = require('./config')
+require('dotenv').config()
 
 const checkToken = (req, res, next) => {
   let token = req.headers['x-access-token'] || req.headers.authorization
@@ -11,8 +12,8 @@ const checkToken = (req, res, next) => {
     jwt.verify(token, config.secret, (err, decoded) => {
       if (err) {
         res.json({
-          success: 400,
-          message: 'Tokrn not Found'
+          status: 400,
+          message: 'Token not Found'
         })
       } else {
         req.decoded = decoded
@@ -21,8 +22,8 @@ const checkToken = (req, res, next) => {
     })
   } else {
     return res.json({
-      success: 400,
-      message: 'Auth Token is not Supplied'
+      status: 400,
+      message: 'Token is not available'
     })
   }
 }
