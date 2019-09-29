@@ -19,7 +19,7 @@ app.use(cors())
 
 const routerNav = require('./src/index')
 
-const port = process.env.SERVER_PORT || 3500
+const port = process.env.PORT || 3500
 
 app.listen(port, function () {
   console.log('Server has running on port :' + port)
