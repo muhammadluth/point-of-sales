@@ -24,8 +24,9 @@ const port = process.env.PORT || 3500
 app.listen(port, function () {
   console.log('Server has running on port :' + port)
 })
+app.use(express.static(__dirname + '/uploads/images'));
 
-app.use('/api', routerNav)
+app.use('/api/v1', routerNav)
 
 app.get('*'), (req, res) => {
   res.send('Sorry, 404 Page not Found')

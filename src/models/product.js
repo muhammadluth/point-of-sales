@@ -27,6 +27,18 @@ module.exports = {
         })
     })
   },
+  getAll: () => {
+    return new Promise((resolve, reject) => {
+      conn.query('SELECT COUNT(id) as allData FROM product',
+        (err, result) => {
+          if (!err) {
+            resolve(result)
+          } else {
+            reject(new Error(err))
+          }
+        })
+    })
+  },
   getById: (id) => {
     return new Promise((resolve, reject) => {
       conn.query('SELECT * FROM product WHERE id = ?', [id],

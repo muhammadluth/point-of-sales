@@ -15,17 +15,17 @@ module.exports = {
   },
   register: (username, email, passwordNotHash) => {
     return new Promise((resolve, reject) => {
-          bcrypt.hash(passwordNotHash, 10, (err, password) => {
-            if (err) return reject(err)
-            const data = { username, email, password }
-            conn.query(`INSERT INTO users SET ?`, data, (err, res) => {
-              if (!err) {
-                resolve(res)
-              } else {
-                reject(err)
-              }
-            })
-          })
+      bcrypt.hash(passwordNotHash, 10, (err, password) => {
+        if (err) return reject(err)
+        const data = { username, email, password }
+        conn.query('INSERT INTO users SET ?', data, (err, res) => {
+          if (!err) {
+            resolve(res)
+          } else {
+            reject(err)
+          }
+        })
+      })
     })
   }
 }

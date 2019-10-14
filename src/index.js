@@ -1,12 +1,16 @@
-const express = require('express')
-const Route = express.Router()
+const express = require("express");
+const Route = express.Router();
 
-const product = require('./routes/product')
-const category = require('./routes/category')
-const users = require('./routes/users')
+const product = require("./routes/product");
+const category = require("./routes/category");
+const users = require("./routes/users");
+const history = require("./routes/history");
+const order = require("./routes/order");
 
-Route.use('/v1.0/product', product)
-Route.use('/v1.0/category', category)
-Route.use('/v1.0/users', users)
+Route.use("/product", product);
+Route.use("/category", category);
+Route.use("/users", users);
+Route.use("/history", history);
+Route.use("/order", order);
 
-module.exports = Route
+module.exports = Route;
