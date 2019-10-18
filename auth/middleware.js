@@ -1,33 +1,26 @@
-const jwt = require('jsonwebtoken')
-const config = require('./config')
-require('dotenv').config()
+const jwt = require("jsonwebtoken");
+const config = require("./config");
+require("dotenv").config();
 
 const checkToken = (req, res, next) => {
-  let token = req.headers['x-access-token'] || req.headers.authorization
+  var bearerHeader = req.headers.authorization;
 
-  if (token) {
-    if (token.startsWith('Bearer')) {
-      token = token.slice(7, token.lenght)
-    }
-    jwt.verify(token, config.secret, (err, decoded) => {
+  if (typeof bearerHeader !== "undefined") {
+    const bearer = bearerHeader.split(" ");
+    const bearerToken = bearer[1];
+
+    jwt.verify(bearerToken, process.env.SECRET_KEY, (err, result) => {
       if (err) {
-        res.json({
-          status: 400,
-          message: 'Token not Found'
-        })
+        res.sendStatus(403);
       } else {
-        req.decoded = decoded
-        next()
+        next();
       }
-    })
+    });
   } else {
-    return res.json({
-      status: 400,
-      message: 'Token is not available'
-    })
+    res.sendStatus(403);
   }
-}
+};
 
 module.exports = {
   checkToken: checkToken
-}
+};

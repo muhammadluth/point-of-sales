@@ -6,6 +6,7 @@ const middleware = require("../../auth/middleware");
 const productController = require("../controllers/product");
 
 Route.get("/", productController.getProduct)
+  .get("/desc", productController.getDesc)
   .get("/:id", productController.getById)
   .post("/", middleware.checkToken, productController.addProduct)
   .put("/:id", middleware.checkToken, productController.updateProduct)

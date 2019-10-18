@@ -25,6 +25,28 @@ module.exports = {
         });
       });
   },
+  getDesc: (req, res) => {
+    const { sort } = req.query;
+
+    productModel
+      .getDesc(sort)
+      .then(async result => {
+        let allData = await productModel.getAll();
+        res.json({
+          status: 200,
+          message: "Success View a Data!",
+          allData: allData[0].allData,
+          data: result
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        res.json({
+          status: 500,
+          message: "Error View a Data!"
+        });
+      });
+  },
   getById: (req, res) => {
     const { id } = req.params;
 
@@ -163,8 +185,10 @@ module.exports = {
       });
   },
   deleteProduct: (req, res) => {
+    const id = req.params;
+
     productModel
-      .deleteProduct(req.params.id)
+      .deleteProduct(id)
       .then(result => {
         res.json({
           status: 200,

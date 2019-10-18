@@ -1,8 +1,4 @@
 const orderModel = require("../models/order");
-const redis = require("redis");
-const client = redis.createClient();
-const orderRedKey = "users: order";
-
 module.exports = {
   // grafik
   getRevenue: (req, res) => {
