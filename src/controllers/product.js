@@ -1,6 +1,6 @@
 const productModel = require("../models/product");
 const uuid = require("uuid/v4");
-const fs = require("fs").promises;
+const fs = require("fs");
 
 module.exports = {
   getProduct: (req, res) => {
@@ -141,8 +141,6 @@ module.exports = {
 
     const images = req.files.image;
 
-    const image = uuid() + `.${req.files.image.mimetype.split("/")[1]}`;
-
     const img = ["png", "jpg", "jpeg", "svg", "gif"].includes(
       req.files.image.mimetype.split("/")[1]
     );
@@ -153,34 +151,38 @@ module.exports = {
       });
     }
 
+    const image = uuid() + `.${req.files.image.mimetype.split("/")[1]}`;
+
     images.mv("uploads/images/" + image, function(err) {
       if (err) {
         return res.status(500).send(err);
       }
     });
 
+    const data = {
+      name,
+      description,
+      category_id,
+      image: image,
+      price,
+      qty
+    };
+
+    const id = req.params.id;
     productModel
-      .getById(req.params.id)
-      .then(([result]) => {
-        console.log(result);
-        fs.unlink(`uploads/images/${result.image}`).catch(err => {});
-      })
-      .then(() => {
-        const data = { name, description, image, category_id, price, qty };
-        return productModel.updateProduct([data, { id: req.params.id }]);
-      })
+      .updateProduct(data, id)
       .then(result => {
         res.json({
           status: 200,
-          message: "Success Updating Data!",
-          data: result
+          message: "Data Edited Successfully",
+          data
         });
       })
       .catch(err => {
-        console.log(err);
-        res.json({
+        res.status(500).json({
           status: 500,
-          message: "Name is Already Exist!"
+          message: "Failed to Edit Data!",
+          error: err
         });
       });
   },

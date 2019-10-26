@@ -9,7 +9,9 @@ module.exports = {
   login: (req, res) => {
     const schema = Joi.object().keys({
       email: Joi.string()
-        .email({ minDomainAtoms: 2 })
+        .email({
+          minDomainAtoms: 2
+        })
         .required(),
       password: Joi.string().required()
     });
@@ -24,27 +26,28 @@ module.exports = {
     }
 
     const { email, password } = result.value;
-
     if (email && password) {
       conn.query(
         "SELECT * FROM users WHERE email = ?",
         [email],
         (err, [result]) => {
-          if (err) {
-            return res.status(500).send({ err });
-          }
-          if (result < 1) {
+          if (!result) {
             return res.json({
               success: 400,
               message: "Account not Found!"
             });
           }
           bcrypt.compare(password, result.password, (err, valid) => {
-            if (err) return res.status(500).send({ err });
             if (valid) {
-              const token = jwt.sign({ email: email }, config.secret, {
-                expiresIn: "24h"
-              });
+              const token = jwt.sign(
+                {
+                  email: email
+                },
+                config.secret,
+                {
+                  expiresIn: "1h"
+                }
+              );
               return res.json({
                 success: 200,
                 message: "Login success",

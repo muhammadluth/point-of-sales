@@ -1,4 +1,5 @@
 const conn = require("../configs/db");
+const fs = require("fs");
 
 module.exports = {
   getProduct: (search, limit, page = 1, name) => {
@@ -83,28 +84,56 @@ module.exports = {
       });
     });
   },
-  updateProduct: data => {
+
+  updateProduct: (data, id) => {
+    console.log(data.image);
     return new Promise((resolve, reject) => {
-      conn.query("UPDATE product SET ? WHERE ?", data, (err, result) => {
-        if (!err) {
-          resolve(result);
-        } else {
-          reject(new Error(err));
+      conn.query(
+        "SELECT * from product WHERE id = ?",
+        id,
+        (err, resultSelect) => {
+          image = resultSelect[0].image;
+          if (resultSelect.length > 0) {
+            conn.query(
+              "UPDATE product SET ? WHERE id = ?",
+              [data, id],
+              (err, result) => {
+                if (!err) {
+                  if (fs.existsSync("uploads/images/" + resultSelect[0].image))
+                    fs.unlinkSync("uploads/images/" + resultSelect[0].image);
+                  resolve(result);
+                } else {
+                  reject(new Error(err));
+                }
+              }
+            );
+          } else {
+            reject("ID NOT FOUND!");
+          }
         }
-      });
+      );
     });
   },
-  // updateImage: (image) =>{
-
-  // },
   deleteProduct: id => {
     return new Promise((resolve, reject) => {
-      conn.query("DELETE from product WHERE ?", [id], (err, result) => {
-        if (!err) {
-          resolve(result);
-        } else {
-          reject(new Error(err));
-        }
+      conn.query("SELECT image FROM product WHERE ?", [id], (err, result) => {
+        let image = result[0].image;
+        conn.query("DELETE from product WHERE ?", [id], (err, result) => {
+          if (!err) {
+            if (image !== null) {
+              fs.unlink(`./uploads/images/${image}`, err => {
+                if (err) {
+                  console.log(err);
+                } else {
+                  result = "Image deleted!";
+                  resolve(result);
+                }
+              });
+            }
+          } else {
+            reject(new Error(err));
+          }
+        });
       });
     });
   },

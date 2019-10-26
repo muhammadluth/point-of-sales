@@ -10,7 +10,7 @@ Route.get("/", productController.getProduct)
   .get("/:id", productController.getById)
   .post("/", middleware.checkToken, productController.addProduct)
   .put("/:id", middleware.checkToken, productController.updateProduct)
-  .delete("/:id", middleware.checkToken, productController.deleteProduct)
+  .delete("/:id", productController.deleteProduct)
   .patch("/:id", middleware.checkToken, productController.reduceProduct);
 
 module.exports = Route;
