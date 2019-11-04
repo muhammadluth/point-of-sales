@@ -8,9 +8,9 @@ const productController = require("../controllers/product");
 Route.get("/", productController.getProduct)
   .get("/desc", productController.getDesc)
   .get("/:id", productController.getById)
-  .post("/", middleware.checkToken, productController.addProduct)
-  .put("/:id", middleware.checkToken, productController.updateProduct)
+  .post("/", productController.addProduct)
+  .put("/:id", productController.updateProduct)
   .delete("/:id", productController.deleteProduct)
-  .patch("/:id", middleware.checkToken, productController.reduceProduct);
+  .patch("/:id", productController.reduceProduct);
 
 module.exports = Route;
