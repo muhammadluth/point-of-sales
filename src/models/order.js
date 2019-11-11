@@ -1,6 +1,17 @@
 const conn = require("../configs/db");
 
 module.exports = {
+  addHistory: data => {
+    return new Promise((resolve, reject) => {
+      conn.query("INSERT INTO history SET ?", data, (err, result) => {
+        if (!err) {
+          resolve(result);
+        } else {
+          reject(new Error(err));
+        }
+      });
+    });
+  },
   // card
   getAllOrder: () => {
     return new Promise((resolve, reject) => {

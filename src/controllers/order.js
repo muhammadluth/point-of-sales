@@ -1,5 +1,26 @@
 const orderModel = require("../models/order");
 module.exports = {
+  addHistory: (req, res) => {
+    const { invoices, user, orders, amount } = req.body;
+    const data = { invoices, user, orders, amount };
+    // return res.json(data)
+    orderModel
+      .addHistory(data)
+      .then(result => {
+        res.json({
+          status: 200,
+          message: "Success Adding Data!",
+          data: result
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        res.json({
+          status: 500,
+          message: "Error Adding Data!"
+        });
+      });
+  },
   // grafik
   getRevenue: (req, res) => {
     let orderBy = req.query.order;

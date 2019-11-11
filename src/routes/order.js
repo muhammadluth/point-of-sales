@@ -6,5 +6,6 @@ const orderController = require("../controllers/order");
 
 Route.get("/revenue", orderController.getRevenue) // grafik
   .get("/allorder", orderController.getAllOrder) // card
-  .get("/recent", orderController.getRecentOrder); // table
+  .get("/recent", orderController.getRecentOrder) // table
+  .post("/", orderController.addHistory);
 module.exports = Route;
